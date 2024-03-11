@@ -1,95 +1,62 @@
-import random
-from kivy.app import App
-from kivy.uix.boxlayout import BoxLayout
-from kivy.uix.button import Button
-from kivy.uix.textinput import TextInput
-from kivy.uix.scrollview import ScrollView
-from kivy.clock import Clock
+[app]
 
-class BitcoinWalletApp(App):
-    def __init__(self):
-        super().__init__()
-        self.wallets = set()
-        self.bitcoins = set()
-        self.is_searching = False
-        self.address_count = 0
-        self.bitcoin_count = 0
+# Название вашего приложения
+title = BitcoinWalletApp
 
-    def generate_wallet(self):
-        alphabet = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz"
-        length = 34
-        return ''.join(random.choices(alphabet, k=length))
+# Пакетное имя приложения (должно быть уникальным)
+package.name = bitcoin_wallet_app
 
-    def generate_bitcoin_amount(self):
-        return round(random.uniform(0.1, 1), 2)
+# Версия вашего приложения
+version = 0.1
 
-    def stop_search(self, instance):
-        self.is_searching = False
+# Используемые пакеты Python и их версии
+requirements = kivy
 
-    def generate_and_display_wallet(self, dt):
-        if self.is_searching:
-            wallet = self.generate_wallet()
-            bitcoin_amount = self.generate_bitcoin_amount()
-            self.address_count += 1
-            self.wallets.add(wallet)
-            if self.address_count % 100 == 0:
-                self.bitcoin_count += bitcoin_amount
-                self.update_bitcoin_table(self.bitcoin_count)
-            self.console.text += wallet + '\n'
+# Конфигурация сборки для Android
+# (эти параметры могут варьироваться в зависимости от ваших требований)
+[buildozer]
 
-    def search_data(self, instance):
-        if not self.is_searching:
-            self.is_searching = True
-            self.console.text = ""  # Clear console before starting a new search
-            self.address_count = 0  # Reset address count
-            Clock.schedule_interval(self.generate_and_display_wallet, 0.01)
+# Установите архитектуру для сборки (armeabi-v7a, arm64-v8a, x86, x86_64)
+# Укажите только одну архитектуру для более быстрой сборки
+# android.arch = armeabi-v7a
 
-    def update_bitcoin_table(self, amount):
-        self.bitcoin_table.text = f"Найдено биткоинов: {amount} BTC"
+# Путь к SDK Android (установленный через Android Studio)
+android.sdk = /путь/к/sdk
 
-    def scroll_to_bottom(self, instance):
-        self.console_scroll_view.scroll_y = 0
+# Путь к NDK (установленный через Android Studio)
+android.ndk = /путь/к/ndk
 
-    def output_address(self, instance):
-        address = self.address_input.text
-        if address:
-            self.console.text += address + '\n'
-            self.address_input.text = ""  # Clear the text input after outputting the address
+# Дополнительные инструменты для сборки
+# (если они необходимы, например, JDK, ANT, Apache ANT)
+# android.gradle_dependencies = 'com.android.support:support-core-utils:28.0.0'
 
-    def build(self):
-        root = BoxLayout(orientation='vertical')
+# Список разрешений приложения (если они необходимы)
+# android.permissions = INTERNET
 
-        # Верхняя часть с тремя кнопками
-        top_layout = BoxLayout(orientation='horizontal', size_hint_y=0.1)
-        search_button = Button(text="Поиск", background_color=(0, 0.5, 1, 1))
-        search_button.bind(on_press=self.search_data)
-        stop_button = Button(text="Стоп", background_color=(1, 0.5, 0, 1))
-        stop_button.bind(on_press=self.stop_search)
-        top_layout.add_widget(search_button)
-        top_layout.add_widget(stop_button)
-        root.add_widget(top_layout)
+# Путь к исходным файлам проекта (где находится ваш файл main.py)
+source.dir = .
 
-        # Консоль и скролл
-        self.console = TextInput(readonly=True, multiline=True)
-        self.console.height = 400
-        self.console_scroll_view = ScrollView()
-        self.console_scroll_view.add_widget(self.console)
-        root.add_widget(self.console_scroll_view)
+# Пусть к исходным файлам проекта (где находятся ваши .py файлы)
+source.include_exts = py
 
-        # Нижняя часть с кнопкой вывода адреса
-        bottom_layout = BoxLayout(orientation='horizontal', size_hint_y=0.1)
-        self.address_input = TextInput(hint_text='Введите адрес', multiline=False)
-        output_button = Button(text="Вывод", background_color=(0, 0.5, 1, 1))
-        output_button.bind(on_press=self.output_address)
-        bottom_layout.add_widget(self.address_input)
-        bottom_layout.add_widget(output_button)
-        root.add_widget(bottom_layout)
+# Пусть к исходным файлам проекта (где находятся ваши .kv файлы)
+# Поместите ваши файлы .kv в папку с исходными файлами проекта
+# или укажите их здесь, если они находятся в другом месте
+# source.include_exts = py,kv
 
-        # Таблица для биткоинов
-        self.bitcoin_table = TextInput(readonly=True, multiline=False)
-        root.add_widget(self.bitcoin_table)
+# Настройки сборки для Android
+[app]
 
-        return root
+# Настройки сборки для Android
+# (эти параметры могут варьироваться в зависимости от ваших требований)
+android.permissions = INTERNET
 
-if __name__ == "__main__":
-    BitcoinWalletApp().run()
+# Имя файла иконки вашего приложения
+# (если он находится в папке с исходными файлами проекта)
+# android.icon = icon.png
+
+# Тема вашего приложения
+# android.theme = @android:style/Theme.NoTitleBar
+
+# Архитектура сборки (по умолчанию armeabi-v7a)
+# android.arch = armeabi-v7a
